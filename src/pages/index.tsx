@@ -1,8 +1,12 @@
+import dayjs from 'dayjs'
 import Head from 'next/head'
-import Link from 'next/link'
+import relativeTime from 'dayjs/plugin/relativeTime'
 import { SignInButton, useUser } from '@clerk/nextjs'
 
-import { api, RouterOutputs } from '~/utils/api'
+import { api } from '~/utils/api'
+import type { RouterOutputs } from '~/utils/api'
+
+dayjs.extend(relativeTime)
 
 const CreatePostWizard = () => {
   const { user } = useUser()
@@ -30,8 +34,10 @@ const PostView = (props: PostViewProps): JSX.Element => {
     <div key={post.id} className="flex gap-x-3 border-b border-slate-400 p-4">
       <img src={author.profilePicture} alt="Profile Picture" className="h-14 w-14 rounded-full" />
       <div className="flex flex-col">
-        <div className="flex text-slate-300">
+        <div className="flex gap-x-1 text-slate-300">
           <span>{`@${author.username}`}</span>
+          <span>&bull;</span>
+          <span>{dayjs(post.createdAt).fromNow()}</span>
         </div>
         <span>{post.content}</span>
       </div>
@@ -70,15 +76,7 @@ export default function Home() {
             {user.isSignedIn && <CreatePostWizard />}
           </div>
           <div className="flex flex-col">
-            {data?.map(({ post, author }) => (
-              <PostView
-                key={post.id}
-                {...{
-                  post,
-                  author
-                }}
-              />
-            ))}
+            {data?.map(({ ...fullPost }) => <PostView key={fullPost.post.id} {...fullPost} />)}
           </div>
         </div>
       </main>
