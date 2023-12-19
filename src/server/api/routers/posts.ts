@@ -3,17 +3,9 @@ import { Redis } from '@upstash/redis'
 import { TRPCError } from '@trpc/server'
 import { clerkClient } from '@clerk/nextjs'
 import { Ratelimit } from '@upstash/ratelimit'
-import { User } from '@clerk/nextjs/dist/types/server'
 
+import { filterUserForClient } from '~/server/helpers/filterUserForClient'
 import { createTRPCRouter, privateProcedure, publicProcedure } from '~/server/api/trpc'
-
-const filterUserForClient = (user: User) => {
-  return {
-    id: user.id,
-    username: user.username,
-    profilePicture: user.profileImageUrl
-  }
-}
 
 // Create a new ratelimiter, that allow 3 requests per 1 minute
 const ratelimit = new Ratelimit({
