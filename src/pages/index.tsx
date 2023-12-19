@@ -1,5 +1,6 @@
 import dayjs from 'dayjs'
 import Head from 'next/head'
+import Image from 'next/image'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import { SignInButton, useUser } from '@clerk/nextjs'
 
@@ -15,7 +16,13 @@ const CreatePostWizard = () => {
 
   return (
     <div className="flex w-full gap-x-3">
-      <img src={user.profileImageUrl} alt="Profile Image" className="h-14 w-14 rounded-full" />
+      <Image
+        width={56}
+        height={56}
+        src={user.profileImageUrl}
+        alt={`${user.username}'s profile picture`}
+        className="h-14 w-14 rounded-full"
+      />
       <input
         type="text"
         placeholder="Type some emojis!"
@@ -32,7 +39,13 @@ const PostView = (props: PostViewProps): JSX.Element => {
 
   return (
     <div key={post.id} className="flex gap-x-3 border-b border-slate-400 p-4">
-      <img src={author.profilePicture} alt="Profile Picture" className="h-14 w-14 rounded-full" />
+      <Image
+        width={56}
+        height={56}
+        src={author.profilePicture}
+        alt={`${author.username}'s profile picture`}
+        className="h-14 w-14 rounded-full"
+      />
       <div className="flex flex-col">
         <div className="flex gap-x-1 text-slate-300">
           <span>{`@${author.username}`}</span>
