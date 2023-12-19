@@ -9,6 +9,7 @@ import { api } from '~/utils/api'
 import { Spinner } from '~/components/spinner'
 import type { RouterOutputs } from '~/utils/api'
 import { toast } from 'sonner'
+import Link from 'next/link'
 
 dayjs.extend(relativeTime)
 
@@ -100,9 +101,13 @@ const PostView = (props: PostViewProps): JSX.Element => {
       />
       <div className="flex flex-col">
         <div className="flex gap-x-1 text-slate-300">
-          <span>{`@${author.username}`}</span>
+          <Link href={`/@${author.username}`}>
+            <span>{`@${author.username}`}</span>
+          </Link>
           <span>&bull;</span>
-          <span>{dayjs(post.createdAt).fromNow()}</span>
+          <Link href={`/@${author.username}`}>
+            <span>{dayjs(post.createdAt).fromNow()}</span>
+          </Link>
         </div>
         <span>{post.content}</span>
       </div>
