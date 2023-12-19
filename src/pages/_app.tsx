@@ -1,15 +1,17 @@
-import { type AppType } from "next/app";
-import { ClerkProvider } from "@clerk/nextjs";
+import { Toaster } from 'sonner'
+import { type AppType } from 'next/app'
+import { ClerkProvider } from '@clerk/nextjs'
 
-import "~/styles/globals.css";
-import { api } from "~/utils/api";
+import '~/styles/globals.css'
+import { api } from '~/utils/api'
 
 const MyApp: AppType = ({ Component, pageProps }) => {
   return (
     <ClerkProvider {...pageProps}>
+      <Toaster position="bottom-center" />
       <Component {...pageProps} />
     </ClerkProvider>
   )
-};
+}
 
-export default api.withTRPC(MyApp);
+export default api.withTRPC(MyApp)

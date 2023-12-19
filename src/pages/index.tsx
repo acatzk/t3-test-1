@@ -8,6 +8,7 @@ import { SignInButton, useUser } from '@clerk/nextjs'
 import { api } from '~/utils/api'
 import { Spinner } from '~/components/spinner'
 import type { RouterOutputs } from '~/utils/api'
+import { toast } from 'sonner'
 
 dayjs.extend(relativeTime)
 
@@ -21,6 +22,15 @@ const CreatePostWizard = () => {
     onSuccess: () => {
       setInput('')
       void ctx.posts.getAll.invalidate()
+      toast.success('Saved')
+    },
+    onError: (e) => {
+      const errorMessage = e.data?.zodError?.fieldErrors.content
+      if (errorMessage && errorMessage[0]) {
+        toast.error(errorMessage[0])
+      } else {
+        toast.error('Failed to post! Please try again later.')
+      }
     }
   })
 
@@ -41,17 +51,35 @@ const CreatePostWizard = () => {
         className="w-full bg-transparent outline-none"
         value={input}
         disabled={isPosting}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter') {
+            e.preventDefault()
+
+            if (input !== '') {
+              mutate({
+                content: input
+              })
+            }
+          }
+        }}
         onChange={(e) => setInput(e.target.value)}
       />
-      <button
-        onClick={() =>
-          mutate({
-            content: input
-          })
-        }
-      >
-        Post
-      </button>
+      {input !== '' && !isPosting && (
+        <button
+          onClick={() => {
+            mutate({
+              content: input
+            })
+          }}
+        >
+          Post
+        </button>
+      )}
+      {isPosting && (
+        <div className="flex scale-50 items-center justify-center">
+          <Spinner />
+        </div>
+      )}
     </div>
   )
 }
@@ -62,7 +90,7 @@ const PostView = (props: PostViewProps): JSX.Element => {
   const { post, author } = props
 
   return (
-    <div key={post.id} className="flex gap-x-3 border-b border-slate-400 p-4">
+    <div key={post.id} className="flex gap-x-3 p-4">
       <Image
         width={56}
         height={56}
@@ -121,7 +149,7 @@ const Feed = () => {
   }
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col  divide-y divide-slate-400 ">
       {data?.map(({ ...fullPost }) => <PostView key={fullPost.post.id} {...fullPost} />)}
     </div>
   )
@@ -166,7 +194,7 @@ export default function Home() {
 
 const Layout = ({ children }: { children: ReactNode }): JSX.Element => {
   return (
-    <main className="relative flex h-screen justify-center">
+    <main className="relative flex h-full justify-center">
       <div className="mx-auto w-full border-x border-slate-400 md:max-w-2xl">{children}</div>
     </main>
   )
